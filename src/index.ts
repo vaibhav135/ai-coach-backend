@@ -6,7 +6,9 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { env } from '@/lib/env.js'
+import { requireAuth } from '@/middleware/auth.js'
 import { errorHandler, notFoundHandler } from '@/middleware/error-handler.js'
+import auth from '@/routes/auth.js'
 
 const app = new Hono()
 
@@ -14,13 +16,22 @@ const app = new Hono()
 app.onError(errorHandler)
 app.notFound(notFoundHandler)
 
-// Routes
+// Public routes
 app.get('/', (c) => {
   return c.json({ message: 'AI Coach Backend' })
 })
 
 app.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+// Auth routes
+app.route('/auth', auth)
+
+// Protected routes example
+app.get('/me', requireAuth, (c) => {
+  const user = c.get('user')
+  return c.json({ user })
 })
 
 console.log(`Server running on http://localhost:${env.PORT}`)
