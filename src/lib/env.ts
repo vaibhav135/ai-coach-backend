@@ -15,7 +15,9 @@ function required(key: string): string {
   return value
 }
 
-function optional(key: string, defaultValue: string): string {
+function optional(key: string): string | undefined
+function optional(key: string, defaultValue: string): string
+function optional(key: string, defaultValue?: string): string | undefined {
   return process.env[key] ?? defaultValue
 }
 
@@ -31,13 +33,20 @@ export const env = {
   // Database
   DATABASE_URL: required('DATABASE_URL'),
 
-  // LiveKit
-  LIVEKIT_URL: required('LIVEKIT_URL'),
-  LIVEKIT_API_KEY: required('LIVEKIT_API_KEY'),
-  LIVEKIT_API_SECRET: required('LIVEKIT_API_SECRET'),
+  // Google OAuth
+  GOOGLE_CLIENT_ID: required('GOOGLE_CLIENT_ID'),
+  GOOGLE_CLIENT_SECRET: required('GOOGLE_CLIENT_SECRET'),
 
-  // OpenAI
-  OPENAI_API_KEY: required('OPENAI_API_KEY'),
+  // JWT
+  JWT_SECRET: required('JWT_SECRET'),
+
+  // LiveKit (optional for now - required when using agents)
+  LIVEKIT_URL: optional('LIVEKIT_URL'),
+  LIVEKIT_API_KEY: optional('LIVEKIT_API_KEY'),
+  LIVEKIT_API_SECRET: optional('LIVEKIT_API_SECRET'),
+
+  // OpenAI (optional for now - required when using agents)
+  OPENAI_API_KEY: optional('OPENAI_API_KEY'),
 } as const
 
 // Validate all env vars at import time (fail fast)
